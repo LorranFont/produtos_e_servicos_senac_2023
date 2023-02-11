@@ -4,7 +4,7 @@ from produtos.models import Produto
 from produtos.forms import ProdutoModelForm
 
 def listagem_produtos(request):
-    produtos = Produto.objects.all() # <----- Utiliza o ORM do Django
+    produtos = Produto.objects.filter(excluido=False) 
     produtos_dos_vendedores = [{
         'vendedor': {'nome': 'John Doe'},
         'produtos': produtos
@@ -34,3 +34,15 @@ def cadastro_produto(request):
             form.save()
             return HttpResponseRedirect('/produtos/')
     return render(request, 'templates/cadastrar_produto.html', context)
+
+def excluir_produto(request, id):
+    produto = get_object_or_404(Produto, pk=id)
+    if request.method == 'POST':
+        produto.excluido = True
+        produto.save()
+        return HttpResponseRedirect('/produtos/')
+
+    context = {
+        'produto': produto
+    }
+    return render(request, 'templates/excluir_produto.html', context)
