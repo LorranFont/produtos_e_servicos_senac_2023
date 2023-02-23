@@ -8,8 +8,9 @@
         </div>
         <ul>
         {% for produto in produtos_do_vendedor.produtos %}
-            <li> {{ produto.nome }} - R$ {{ produto.preco }}<li> <a href="{{ produto.id }}">Ver detalhes</a>
+            <li> {{ produto.nome }} - R$ {{ produto.preco }} </li> <a href="{{ produto.id }}">Ver detalhes</a>
         {% endfor %}
         </ul>
+        
     {% endfor %}
 {% endblock conteudo %}
