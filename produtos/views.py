@@ -1,16 +1,21 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from produtos.models import Produto, TIPO_PRODUTO, TIPO_SERVICO
+from produtos.models import Produto, Anunciante, TIPO_PRODUTO, TIPO_SERVICO
 from produtos.forms import ProdutoModelForm, ServicoModelForm
 
 
 def listagem_produtos(request):
-    produtos = Produto.objects.filter(tipo=TIPO_PRODUTO, excluido=False) 
-    produtos_dos_vendedores = [{
-        'vendedor': {'nome': 'John Doe'},
-        'produtos': produtos
-    }]
-    context = {'produtos_dos_vendedores': produtos_dos_vendedores }
+    anunciantes = Anunciante.objects.all()
+    produtos_dos_vendedores = []
+
+    for anunciante in anunciantes:
+        produtos_do_vendedor = anunciante.produto_set.filter(tipo=TIPO_PRODUTO, excluido=False)
+        if produtos_do_vendedor:
+            produtos_dos_vendedores.append({
+                'vendedor': {'nome': anunciante.nome},
+                'produtos': produtos_do_vendedor
+            })
+    context = {'produtos_dos_vendedores': produtos_dos_vendedores}
     return render(request, 'templates/listagem_produtos.html', context)
 
 def detalhamento_produto(request, id):
@@ -68,11 +73,16 @@ def alterar_produto(request,id):
     return render(request, 'templates/alterar_produto.html', context)
 
 def listagem_servicos(request):
-    servicos = Produto.objects.filter(tipo=TIPO_SERVICO, excluido=False) 
-    servicos_dos_vendedores = [{
-        'vendedor': {'nome': 'john Doe'},
-        'servicos': servicos
-    }]
+    anunciantes = Anunciante.objects.all()
+    servicos_dos_vendedores = []
+
+    for anunciante in anunciantes:
+        servicos_do_vendedor = anunciante.produto_set.filter(tipo=TIPO_SERVICO, excluido=False)
+        if servicos_do_vendedor:
+            servicos_dos_vendedores.append({
+                'vendedor': {'nome': anunciante.nome},
+                'servicos': servicos_do_vendedor
+            })
     context = {'servicos_dos_vendedores': servicos_dos_vendedores}
 
     return render(request, 'templates/listagem_servicos.html', context)
